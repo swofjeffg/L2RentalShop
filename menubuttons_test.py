@@ -2,17 +2,19 @@
 from tkinter import *
 from tkinter import filedialog as file
 import csv
+import os
 
+path = os.path.abspath('menubuttons_test.py')
 root = Tk()
 root.title('Test for menu buttons')
 
 # Creating functions
 def load_savefile():
-    filename = file.askopenfilename(title='Open a file', initialdir='/', defaultextension='.csv', filetypes=[("CSV Files",'*.csv')])    # Opens windows file searcher, only accepts CSV files
+    filename = file.askopenfilename(title='Open a file', initialdir=path, defaultextension='.csv', filetypes=[("CSV Files",'*.csv')])    # Opens windows file searcher, only accepts CSV files
     print("I can load files")
 
 def save_savefile():
-    filename = file.asksaveasfile(title='Save a file', initialdir='/', defaultextension='.csv', filetypes=[("CSV Files",'*.csv')])  # Opens windows file searcher, allows user to save a .CSV file
+    filename = file.asksaveasfile(title='Save a file', initialdir=path, defaultextension='.csv', filetypes=[("CSV Files",'*.csv')])  # Opens windows file searcher, allows user to save a .CSV file
     print("I can save files")
 
 # Creating UI
