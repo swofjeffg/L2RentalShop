@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Level 2 Rental Shop Assignment - AS91896
 
 Assessment submission for AS91896 NCEA Level 2 Computer Science internal
