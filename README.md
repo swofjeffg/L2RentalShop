@@ -6,9 +6,9 @@ Assessment submission for AS91896 NCEA Level 2 Computer Science internal
 ## Version checklist
 
 ### v0.1
-- [ ] Create appropriate and readable variables
-- [ ] Create all files for modular code
-- [ ] Create a basic window
+- [x] Create appropriate and readable variables
+- [x] Create all files for modular code
+- [x] Create a basic window
 
 ### v0.2
 - [ ] Create input field
