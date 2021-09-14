@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """
 Application Program for AS91896 Internal
 """
