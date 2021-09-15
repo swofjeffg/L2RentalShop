@@ -10,8 +10,8 @@ Assessment submission for AS91896 NCEA Level 2 Computer Science internal
 - [x] Create a basic window
 
 ### v0.2
-- [ ] Create input field
-- [ ] Create submit/add button to append entry information to table
+- [x] Create input field
+- [x] Create submit/add button to append entry information to table
 
 ### v0.3
 - [ ] Validate entry inputs
