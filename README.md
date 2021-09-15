@@ -24,7 +24,7 @@ Assessment submission for AS91896 NCEA Level 2 Computer Science internal
 - [x] Data can be added to table succesfully
 
 ### v0.6
-- [ ] Print specific and helpful error messages in console
+- [x] Print specific and helpful error messages in console
 
 ### v1.0
 - [ ] Find and fix all bugs
