@@ -10,6 +10,7 @@ from tkinter import filedialog as fd
 import datetime
 import csv
 import pathlib
+import re
 
 root = Tk()
 root.title("Julie's Rental Shop")
@@ -23,6 +24,7 @@ def load_savefile():    # function that allows user to open pre-existing '.csv' 
         print("File already loaded, clear all before loading a new file")
     else:
         filename = fd.askopenfilename(title="Load a save", initialdir=path, defaultextension='.csv', filetypes=[('CSV Files','*.csv')])
+        print(filename)
         try:
             with open(filename, 'r') as f:
                 variables = csv.DictReader(f)
@@ -41,7 +43,11 @@ def create_savefile():  # function that allows user to create a new '.csv' file
     if treeview.get_children():
         print("Save data before creating a new save")
     else:
-        filename = fd.asksaveasfile(title='Create a file', initialdir=path, defaultextension='.csv', filetypes=[("CSV Files",'*.csv')])
+        filename = str(fd.asksaveasfile(title='Create a file', initialdir=path, defaultextension='.csv', filetypes=[("CSV Files",'*.csv')])).split("='")[1].split("' ")[0]
+        with open(filename, 'w', newline='') as f:
+            fieldnames = ['date', 'name', 'receipt', 'item_rented', 'rented_amount']
+            csv_dict_writer = csv.DictWriter(f, fieldnames=fieldnames)
+            csv_dict_writer.writeheader()
         tabs.select(1)
 
 def add_data(): # function that adds data to the treeview
