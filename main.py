@@ -1,4 +1,4 @@
-# v0.1
+# v0.2
 """
 Application Program for AS91896 Internal
 """
@@ -21,7 +21,7 @@ fileopened = BooleanVar()
 # creating functions
 def load_savefile():    # function that allows user to open pre-existing '.csv' files for use
     if treeview.get_children():
-        print("File already loaded, clear all before loading a new file")
+        print("File already loaded, clear all before loading a new file | #1")
     else:
         filename = fd.askopenfilename(title="Load a save", initialdir=path, defaultextension='.csv', filetypes=[('CSV Files','*.csv')])
         print(filename)
@@ -41,7 +41,7 @@ def load_savefile():    # function that allows user to open pre-existing '.csv' 
 
 def create_savefile():  # function that allows user to create a new '.csv' file
     if treeview.get_children():
-        print("Save data before creating a new save")
+        print("File already loaded, clear all before loading a new file | #2")
     else:
         filename = str(fd.asksaveasfile(title='Create a file', initialdir=path, defaultextension='.csv', filetypes=[("CSV Files",'*.csv')])).split("='")[1].split("' ")[0]
         with open(filename, 'w', newline='') as f:
