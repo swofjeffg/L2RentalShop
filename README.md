@@ -14,8 +14,8 @@ Assessment submission for AS91896 NCEA Level 2 Computer Science internal
 - [x] Create submit/add button to append entry information to table
 
 ### v0.3
-- [ ] Validate entry inputs
-- [ ] Data should be stored in the data file
+- [x] Validate entry inputs
+- [x] Data should be stored in the data file
 
 ### v0.5
 - [ ] Data automattically saved to data file

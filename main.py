@@ -1,4 +1,4 @@
-# v0.2
+# v0.3
 """
 Application Program for AS91896 Internal
 """
@@ -7,21 +7,24 @@ Application Program for AS91896 Internal
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog as fd
+from tkinter import messagebox
 import datetime
 import csv
 import pathlib
-import re
 
 root = Tk()
 root.title("Julie's Rental Shop")
 path = pathlib.Path(__file__).parent.resolve()
-global fileopened
-fileopened = BooleanVar()
+current_save = "No file selected"
 
 # creating functions
-def load_savefile():    # function that allows user to open pre-existing '.csv' files for use
+def error_popup(msg):  # function that popups up an error message
+    print(msg)
+    messagebox.showerror(title='Error', message=msg)
+
+def load_savefile():    # function that allows user to open pre-existing '.csv' files created by this program for use
     if treeview.get_children():
-        print("File already loaded, clear all before loading a new file | #1")
+        error_popup("File already loaded, clear all before loading a new file.")
     else:
         filename = fd.askopenfilename(title="Load a save", initialdir=path, defaultextension='.csv', filetypes=[('CSV Files','*.csv')])
         try:
@@ -29,51 +32,117 @@ def load_savefile():    # function that allows user to open pre-existing '.csv' 
                 variables = csv.DictReader(f)
                 try:
                     iid = 0
-                    for row in variables:
-                        treeview.insert(parent='', index='end', iid=iid, text="", values=(row['date'], row['name'], row['receipt'], row['item_rented'], row['rented_amount']))
+                    for row in variables:   # minimal error checking as we trust the end-user hasn't tampered with the file
+                        treeview.insert(parent='', index='end', iid=iid, text='', values=(row['date'], row['name'], int(row['receipt']), row['item_rented'], int(row['rented_amount'])))
                         iid += 1
                     tabs.select(1)
+                    global current_save
+                    current_save = filename
                 except:
-                    print("Selected CSV file incorrectly formatted, to see accepted CSV file formatting, please create a new file using this program\nSelected file: (%s)"%filename)
+                    error_popup("Selected CSV file incorrectly formatted, to see accepted CSV file formatting, please create a new file using this program.\n\nSelected file: (%s)"%filename)
         except:
-            print("No file selected")
+            error_popup("No file selected.")
 
 def create_savefile():  # function that allows user to create a new '.csv' file
     if treeview.get_children():
-        print("File already loaded, clear all before loading a new file | #2")
+        error_popup("File already loaded, clear all before loading a new file.")
     else:
-        filename = str(fd.asksaveasfile(title='Create a file', initialdir=path, defaultextension='.csv', filetypes=[("CSV Files",'*.csv')])).split("='")[1].split("' ")[0]
-        with open(filename, 'w', newline='') as f:
+        try:
+            filename = str(fd.asksaveasfile(title='Create a file', initialdir=path, defaultextension='.csv', filetypes=[("CSV Files",'*.csv')])).split("='")[1].split("' ")[0]
+            with open(filename, 'w', newline='') as f:
+                fieldnames = ['date', 'name', 'receipt', 'item_rented', 'rented_amount']
+                csv_dict_writer = csv.DictWriter(f, fieldnames=fieldnames)
+                csv_dict_writer.writeheader()
+            tabs.select(1)
+            global current_save
+            current_save = filename
+        except:
+            error_popup("Failed to start new save.")
+
+def add_data(): # function that adds data to the treeview
+    global current_save
+    errors = False
+    if current_save == "No file selected":
+        errors = True
+        error_popup("No file selected!!")
+    iid = 0
+    for i in treeview.get_children():
+        iid += 1
+    if len(name_entry.get().strip()) or len(receipt_entry.get().strip()) or len(item_entry.get().strip()) or len(amount_entry.get().strip()) == 0:
+        if len(name_entry.get().strip()) == 0:
+            errors = True
+            error_popup("Name was left blank.")
+        if len(receipt_entry.get().strip()) == 0:
+            errors = True
+            error_popup("Receipt was left blank.")
+        if len(item_entry.get().strip()) == 0:
+            errors = True
+            error_popup("Item was left blank.")
+        if len(amount_entry.get().strip()) == 0:
+            errors = True
+            error_popup("Amount was left blank.")
+    try:
+        int(receipt_entry.get().strip())
+        if int(receipt_entry.get().strip()) <= 0:
+            errors = True
+            error_popup("Receipt entry is a negative number.")
+    except:
+        errors = True
+        error_popup("Receipt entry not an interger.")
+    try:
+        int(amount_entry.get().strip())
+        if int(amount_entry.get().strip()) <= 0:
+            errors = True
+            error_popup("Amount entry is a negative number.")
+        if int(receipt_entry.get().strip()) > 500:
+            errors = True
+            error_popup("Amount entry is greater than 500.")
+    except:
+        errors = True
+        error_popup("Amount entry not an interger.")
+    if errors == False:
+        treeview.insert(parent='', index='end', iid=iid, text='', values=(datetime.datetime.now().strftime("%d/%m/%Y | %H:%M"), name_entry.get().strip(), receipt_entry.get().strip(), item_entry.get().strip(), amount_entry.get().strip()))
+        name_entry.delete(0, 'end')
+        receipt_entry.delete(0, 'end')
+        item_entry.delete(0, 'end')
+        amount_entry.delete(0, 'end')
+        save()
+
+def confirm(msg):  # function that sends a popup asking for confirmation for deleting entries
+    global current_save
+    answer = messagebox.askyesno(title='Confirmation', message='Are you sure you want to {}?\n\nCurrent file is: ({})'.format(msg, current_save))
+    if answer:
+        return answer
+
+def remove_selected():  # function that removes only selected items in the treeview
+    answer = confirm('remove selected')
+    if answer:
+        selected = treeview.selection()
+        if selected != 0:
+            for i in selected:
+                treeview.delete(i)
+        save()
+
+def remove_all():   # function that removes all entries from the treeview
+    answer = confirm('remove everything')
+    if answer:
+        for i in treeview.get_children():
+            treeview.delete(i)
+    save()
+
+def save():    # function that saves data
+    data = []
+    for i in treeview.get_children():   # using dicts to and headernames to ensure program recognises this file - not fast but robust
+        data.append({'date': treeview.item(i)['values'][0], 'name': treeview.item(i)['values'][1], 'receipt': treeview.item(i)['values'][2], 'item_rented': treeview.item(i)['values'][3], 'rented_amount': treeview.item(i)['values'][4]})
+    try:
+        with open(current_save, 'w', newline='') as f:
             fieldnames = ['date', 'name', 'receipt', 'item_rented', 'rented_amount']
             csv_dict_writer = csv.DictWriter(f, fieldnames=fieldnames)
             csv_dict_writer.writeheader()
-        tabs.select(1)
-
-def add_data(): # function that adds data to the treeview
-    iid=0
-    pop=0
-    while pop == 0:
-        try:
-            treeview.insert(parent='', index='end', iid=iid, text="", values=(datetime.datetime.now().strftime("%d/%m/%Y | %H:%M"), name_entry.get(), receipt_entry.get(), item_entry.get(), amount_entry.get()))
-            pop+=1
-        except:
-            iid+=1
-
-def remove_selected():  # function that removes only selected items in the treeview
-    selected = treeview.selection()
-    if selected != 0:
-        for i in selected:
-            treeview.delete(i)
-
-def remove_all():   # function that removes all entries from the treeview
-    for i in treeview.get_children():
-        treeview.delete(i)
-
-def manual_save():
-    pass
-
-def auto_save():
-    pass
+            for i in data:
+                csv_dict_writer.writerow(i)
+    except:
+        error_popup("Current save file is missing.\n\nPlease load or start a file in the menu!")
 
 # creating gui
 tabs = ttk.Notebook(root)
@@ -136,7 +205,7 @@ entry_frame.grid(row=1, pady=10)
 command_frame = Frame(treeview_frame)
 clear_selected_button = Button(command_frame, text="Remove selected", command=lambda: remove_selected()).grid(padx=10)
 clear_all_button = Button(command_frame, text="Clear all", command=lambda: remove_all()).grid(row=0, column=1, padx=10)
-save_button = Button(command_frame, text="Save", command=lambda: manual_save()).grid(row=0, column=2, padx=10)
+save_button = Button(command_frame, text="Save", command=lambda: save()).grid(row=0, column=2, padx=10)
 command_frame.grid(row=2, pady=10)
 treeview_frame.columnconfigure(0, weight=1)
 treeview_frame.pack(fill=BOTH)
@@ -157,4 +226,5 @@ tick()
 # "disabling" resizing smaller than widget size
 root.update()
 root.minsize(root.winfo_width(), root.winfo_height())
+# starting app
 root.mainloop()
