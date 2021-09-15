@@ -24,7 +24,6 @@ def load_savefile():    # function that allows user to open pre-existing '.csv' 
         print("File already loaded, clear all before loading a new file | #1")
     else:
         filename = fd.askopenfilename(title="Load a save", initialdir=path, defaultextension='.csv', filetypes=[('CSV Files','*.csv')])
-        print(filename)
         try:
             with open(filename, 'r') as f:
                 variables = csv.DictReader(f)
@@ -55,7 +54,7 @@ def add_data(): # function that adds data to the treeview
     pop=0
     while pop == 0:
         try:
-            treeview.insert(parent='', index='end', iid=iid, text="", values=(datetime.datetime.now().strftime("%d-%m-%Y | %H:%M"), name_entry.get(), receipt_entry.get(), item_entry.get(), amount_entry.get()))
+            treeview.insert(parent='', index='end', iid=iid, text="", values=(datetime.datetime.now().strftime("%d/%m/%Y | %H:%M"), name_entry.get(), receipt_entry.get(), item_entry.get(), amount_entry.get()))
             pop+=1
         except:
             iid+=1
@@ -82,10 +81,12 @@ tabs.pack(fill=BOTH, expand=TRUE)
 
 # menu state
 menu_frame = Frame(tabs)
-menu_title = Label(menu_frame, text="Menu", font="Arial 24 bold").grid(row=0, pady=20, padx=20, sticky='ew')
-start_button = Button(menu_frame, text="Start new save", command=lambda: create_savefile()).grid(row=1, pady=10, padx=330, sticky='ew')
-load_button = Button(menu_frame, text="Load save", command=lambda: load_savefile()).grid(row=2, pady=10, padx=330, sticky='ew')
-save_button = Button(menu_frame, text="Quit", command=lambda: root.destroy()).grid(row=3, pady=10, padx=330, sticky='ew')
+menu_center = Frame(menu_frame)
+menu_title = Label(menu_center, text="Menu", font="Arial 24 bold").grid(row=0, pady=20, padx=20, sticky='ew')
+start_button = Button(menu_center, text="Start new save", command=lambda: create_savefile()).grid(row=1, pady=10, sticky='ew')
+load_button = Button(menu_center, text="Load save", command=lambda: load_savefile()).grid(row=2, pady=10, sticky='ew')
+save_button = Button(menu_center, text="Quit", command=lambda: root.destroy()).grid(row=3, pady=10, sticky='ew')
+menu_center.place(relx=0.5, rely=0.3, anchor=CENTER)
 menu_frame.columnconfigure(0, weight=1)
 menu_frame.pack(fill=BOTH)
 
@@ -97,30 +98,30 @@ tree_scroll = Scrollbar(tree_frame)
 treeview = ttk.Treeview(tree_frame, yscrollcommand=tree_scroll.set)
 treeview['columns'] = ('date', 'name', 'receipt', 'item rented', 'rented amount')
 treeview.column('#0', width=0, stretch=NO)    # invisbile column for parent/child rows
-treeview.column('date', anchor=W, width=150, minwidth=50)
+treeview.column('date', anchor=W, width=105, minwidth=105)
 treeview.column('name', anchor=W, width=150, minwidth=50)
-treeview.column('receipt', anchor=W, width=150, minwidth=50)
+treeview.column('receipt', anchor=W, width=100, minwidth=50)
 treeview.column('item rented', anchor=W, width=150, minwidth=50)
-treeview.column('rented amount', anchor=W, width=150, minwidth=50)
+treeview.column('rented amount', anchor=W, width=100, minwidth=50)
 treeview.heading('#0')
-treeview.heading('date', text="Date & Time", anchor=CENTER)
+treeview.heading('date', text="Date and time", anchor=CENTER)
 treeview.heading('name', text="Customer name", anchor=CENTER)
 treeview.heading('receipt', text="Receipt number", anchor=CENTER)
 treeview.heading('item rented', text="Item rented", anchor=CENTER)
-treeview.heading('rented amount', text="Quantity rented", anchor=CENTER)
+treeview.heading('rented amount', text="Rented amount", anchor=CENTER)
 tree_scroll.configure(command=treeview.yview)
-tree_scroll.grid(row=0, column=1, sticky='nesw')
-treeview.grid(row=0, column=0, sticky='nesw')
-tree_frame.grid(row=0, pady=10)
+tree_scroll.pack(side=RIGHT, fill=Y)
+treeview.pack(side=LEFT, fill=BOTH, expand=TRUE)
+tree_frame.grid(row=0, pady=10, sticky='ew')
 # treeview entries
 entry_frame = Frame(treeview_frame)
-time_label = Label(entry_frame, text="Time").grid(row=0, column=0, padx=10)
+time_label = Label(entry_frame, text="Date and time").grid(row=0, column=0, padx=10)
 time_entry = Label(entry_frame, text="")
 time_entry.grid(row=1, column=0, padx=10)
-name_label = Label(entry_frame, text="Name").grid(row=0, column=1, padx=10)
+name_label = Label(entry_frame, text="Customer name").grid(row=0, column=1, padx=10)
 name_entry = Entry(entry_frame)
 name_entry.grid(row=1, column=1, padx=10)
-receipt_label = Label(entry_frame, text="Receipt").grid(row=0, column=2, padx=10)
+receipt_label = Label(entry_frame, text="Receipt number").grid(row=0, column=2, padx=10)
 receipt_entry = Entry(entry_frame)
 receipt_entry.grid(row=1, column=2, padx=10)
 item_label = Label(entry_frame, text="Item rented").grid(row=0, column=3, padx=10)
@@ -147,9 +148,9 @@ tabs.add(treeview_frame, text="Treeview")
 # clock function to update time
 def tick():
     if '.5' in str(int(datetime.datetime.now().strftime("%S"))/2):  # update the clock on the treeview to display its actually doing something
-        time_entry.configure(text="{}".format(datetime.datetime.now().strftime("%d-%m-%Y | %H:%M")))
+        time_entry.configure(text="{}".format(datetime.datetime.now().strftime("%d/%m/%Y | %H %M")))
     else:
-        time_entry.configure(text="{}".format(datetime.datetime.now().strftime("%d-%m-%Y | %H %M")))
+        time_entry.configure(text="{}".format(datetime.datetime.now().strftime("%d/%m/%Y | %H:%M")))
     root.after(1000, tick)   # called every 1s for accuracy
 tick()
 
