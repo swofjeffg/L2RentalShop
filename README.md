@@ -18,10 +18,10 @@ Assessment submission for AS91896 NCEA Level 2 Computer Science internal
 - [x] Data should be stored in the data file
 
 ### v0.5
-- [ ] Data automattically saved to data file
-- [ ] Data saved to data file on demand
-- [ ] Data can be saved to program from compatible data file
-- [ ] Data can be added to table succesfully
+- [x] Data automattically saved to data file
+- [x] Data saved to data file on demand
+- [x] Data can be saved to program from compatible data file
+- [x] Data can be added to table succesfully
 
 ### v0.6
 - [ ] Print specific and helpful error messages in console
