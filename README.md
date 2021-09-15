@@ -27,6 +27,6 @@ Assessment submission for AS91896 NCEA Level 2 Computer Science internal
 - [x] Print specific and helpful error messages in console
 
 ### v1.0
-- [ ] Find and fix all bugs
-- [ ] Finalize code for submission
-- [ ] Submit code
+- [x] Find and fix all bugs
+- [x] Finalize code for submission
+- [x] Submit code

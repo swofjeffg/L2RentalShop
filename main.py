@@ -1,4 +1,4 @@
-# v0.6
+# v1.0
 """
 Application Program for AS91896 Internal
 """
