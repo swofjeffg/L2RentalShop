@@ -94,7 +94,7 @@ def add_data(): # function that adds data to the treeview
         if int(amount_entry.get().strip()) <= 0:
             errors = True
             error_popup("Amount entry is a negative number.")
-        if int(receipt_entry.get().strip()) > 500:
+        if int(amount_entry.get().strip()) > 500:
             errors = True
             error_popup("Amount entry is greater than 500.")
     except:
